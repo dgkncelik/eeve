@@ -1,0 +1,1 @@
+Evee is a software framework which is designed for messaging(pipeline) based applications
