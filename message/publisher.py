@@ -1,0 +1,2 @@
+class Publisher(object):
+    pass
