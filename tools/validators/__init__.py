@@ -1,13 +1,13 @@
-class NonValidatedError(Exception):
+class NotValid(Exception):
     pass
 
 
-class ValidationConfigurationError(Exception):
+class ValidatorError(Exception):
     pass
 
 
 class Validator(object):
-    def __init__(self, value):
+    def __init__(self, value, **kwargs):
         self.value = value
 
     def validate(self):
