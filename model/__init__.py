@@ -13,41 +13,47 @@ class ModelException(Exception):
 
 
 class Model(object):
-    def __init__(self, storage=Storage(), publisher=Publisher(), consumer=Consumer(), data=None, *args, **kwargs):
-        self.__storage = storage
-        self.__publisher = publisher
-        self.__consumer = consumer
+    def __init__(self, *args, **kwargs):
+        self.__storage = kwargs.pop('storage')
+        self.__publisher = kwargs.pop('publisher')
+        self.__consumer = kwargs.pop('consumer')
+        self.__data = kwargs.pop('data')
 
-        if data is not None and not isinstance(data, dict):
-            raise ModelException('data must be dictionary')
-        elif data is None:
+        if self.__data is not None and not isinstance(self.__data, dict):
+            raise ModelException('data must be in dictionary format')
+        elif self.__data is None:
             self.__data = {}
 
         self.__arguments = args
         self.__parameters = kwargs
         self.__fields = None
 
+        for key in self.__data:
+            self.__setattr__(key, self.__data[key])
+
     def __getattribute__(self, item):
         all_attributes = dir(self)
         if item in all_attributes:
-            attr = getattr(self, item)
-            if isinstance(attr, Field):
-                return attr.value
-            else:
-                return getattr(self, item)
-        else:
-            getattr(self, item)
+            _field = getattr(self, item)
+            if isinstance(_field, Field):
+                return _field.get()
+
+        return getattr(self, item)
 
     def __setattr__(self, key, value):
         all_attributes = dir(self)
         if key in all_attributes:
             attr = getattr(self, key)
             if isinstance(attr, Field):
-                attr.value = value
+                attr.set(value)
+                attr.validate()
+
             else:
                 setattr(self, key, value)
         else:
-            setattr(self, key, value)
+            _field = Field(None, value)
+            # TODO: think! whats gonna happen self.__data when new/old field set?
+            setattr(self, key, _field)
 
     def validate(self):
         pass
@@ -61,13 +67,13 @@ class Model(object):
     def delete(self):
         self.__storage.delete(self)
 
-    def filter(self):
+    def query(self):
         self.__storage.find(self)
 
-    def send(self):
+    def publish(self):
         self.__publisher.publish(self)
 
-    def receive(self):
+    def consume(self):
         self.__consumer.get(self)
 
     def data(self):
