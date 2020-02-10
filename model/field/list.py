@@ -19,9 +19,9 @@ class ListField(Field):
     def validate(self):
         super().validate()
 
-        if self.min_size and len(self.__value) < self.min_size:
+        if self.min_size and len(self.value) < self.min_size:
             raise FieldValidationException('value min size not valid')
-        if self.max_size and len(self.__value) > self.max_size:
+        if self.max_size and len(self.value) > self.max_size:
             raise FieldValidationException('value max size not valid')
 
         return True

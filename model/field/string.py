@@ -19,9 +19,9 @@ class StringField(Field):
     def validate(self):
         super().validate()
 
-        if self.min_length != -1 and len(self.__value) < self.min_length:
+        if self.min_length != -1 and len(self.value) < self.min_length:
             raise FieldValidationException('value min length is invalid')
-        if self.max_length != -1 and len(self.__value) > self.max_length:
+        if self.max_length != -1 and len(self.value) > self.max_length:
             raise FieldValidationException('value max length is invalid')
 
         return True

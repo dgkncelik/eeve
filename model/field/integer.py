@@ -19,9 +19,9 @@ class IntegerField(Field):
     def value(self):
         super().validate()
 
-        if self.min_value and self.__value < self.min_value:
+        if self.min_value and self.value < self.min_value:
             raise FieldValidationException('value is lower then minimum')
-        if self.max_value and self.__value > self.max_value:
+        if self.max_value and self.value > self.max_value:
             raise FieldValidationException('value is bigger then maximum')
 
         return True

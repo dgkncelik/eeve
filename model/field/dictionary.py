@@ -8,7 +8,6 @@ class DictionaryField(Field):
         self.max_size = max_size
         if apply_default is True:
             _default = {}
-
         if min_size is not None and not isinstance(min_size, int):
             raise FieldException('min size must be integer')
         if max_size is not None and not isinstance(max_size, int):
@@ -19,9 +18,9 @@ class DictionaryField(Field):
     def validate(self):
         super().validate()
 
-        if self.min_size and len(self.__value) < self.min_size:
+        if self.min_size and len(self.value) < self.min_size:
             raise FieldValidationException('value min size not valid')
-        if self.max_size and len(self.__value) > self.max_size:
+        if self.max_size and len(self.value) > self.max_size:
             raise FieldValidationException('value max size not valid')
 
         return True

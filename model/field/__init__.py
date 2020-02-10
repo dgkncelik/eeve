@@ -8,30 +8,31 @@ class FieldException(Exception):
 
 class Field(object):
     def __init__(self, primitive_type, value=None, required=False, default=None):
+        self.value = value
         self.default = default
         self.required = required
         self.primitive_type = primitive_type
 
-        self.value = value
-        self.__value = None
+        if self.value is None and self.default is not None:
+            self.value = self.default
 
-    @property
-    def value(self):
-        return self.__value
+    def set(self, _value):
+        if _value is None and self.default is not None:
+            self.value = self.default
+        else:
+            self.value = _value
 
-    @value.setter
-    def value(self, v):
-        self.__value = v
-        self.validate()
+    def get(self):
+        return self.value
 
     def validate(self):
-        if self.required is True and self.__value is None:
+        if self.primitive_type is None:
+            return True
+
+        if self.required is True and self.value is None:
             raise FieldValidationException('value is required for %s field' % self.__class__.__name__)
 
-        if self.__value is None and self.default is not None:
-            self.__value = self.default
-
-        if not isinstance(self.__value, self.primitive_type):
-            raise FieldValidationException('value %s is not instance of %s' % (self.__value, self.primitive_type))
+        if not isinstance(self.value, self.primitive_type):
+            raise FieldValidationException('value %s is not instance of %s' % (self.value, self.primitive_type))
 
         return True
